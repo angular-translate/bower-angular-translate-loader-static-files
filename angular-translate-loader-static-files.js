@@ -3,7 +3,7 @@ angular.module('pascalprecht.translate').factory('$translateStaticFilesLoader', 
   '$http',
   function ($q, $http) {
     return function (options) {
-      if (!options || (!angular.isString(options.prefix) || !angular.isString(options.suffix))) {
+      if (!options || (!options.prefix || !options.suffix)) {
         throw new Error('Couldn\'t load static files, no prefix or suffix specified!');
       }
       var deferred = $q.defer();
