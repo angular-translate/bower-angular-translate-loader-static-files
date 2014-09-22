@@ -4,5 +4,6 @@
   "main": "./angular-translate-loader-static-files.js",
   "dependencies": {
     "angular-translate": "~2.4.0"
-  }
+  },
+  "ignore": []
 }
