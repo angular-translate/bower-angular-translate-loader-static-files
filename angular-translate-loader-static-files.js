@@ -1,7 +1,7 @@
 /*!
- * angular-translate - v2.5.2 - 2014-12-10
+ * angular-translate - v2.6.0 - 2015-02-08
  * http://github.com/angular-translate/angular-translate
- * Copyright (c) 2014 ; Licensed MIT
+ * Copyright (c) 2015 ; Licensed MIT
  */
 angular.module('pascalprecht.translate')
 /**
@@ -21,24 +21,66 @@ angular.module('pascalprecht.translate')
 
   return function (options) {
 
-    if (!options || (!angular.isString(options.prefix) || !angular.isString(options.suffix))) {
-      throw new Error('Couldn\'t load static files, no prefix or suffix specified!');
+    if (!options || (!angular.isArray(options.files) && (!angular.isString(options.prefix) || !angular.isString(options.suffix)))) {
+      throw new Error('Couldn\'t load static files, no files and prefix or suffix specified!');
+    }
+    
+    if (!options.files) {
+      options.files = [{
+        prefix: options.prefix,
+        suffix: options.suffix
+      }];
     }
 
-    var deferred = $q.defer();
+    var load = function (file) {
+      if (!file || (!angular.isString(file.prefix) || !angular.isString(file.suffix))) {
+        throw new Error('Couldn\'t load static file, no prefix or suffix specified!');
+      }
 
-    $http(angular.extend({
-      url: [
-        options.prefix,
-        options.key,
-        options.suffix
-      ].join(''),
-      method: 'GET',
-      params: ''
-    }, options.$http)).success(function (data) {
-      deferred.resolve(data);
-    }).error(function (data) {
-      deferred.reject(options.key);
+      var deferred = $q.defer();
+
+      $http(angular.extend({
+        url: [
+          options.prefix,
+          options.key,
+          options.suffix
+        ].join(''),
+        method: 'GET',
+        params: ''
+      }, options.$http)).success(function (data) {
+        deferred.resolve(data);
+      }).error(function (data) {
+        deferred.reject(options.key);
+      });
+
+      return deferred.promise;
+    };
+
+    var deferred = $q.defer(),
+        promises = [],
+        length = options.files.length;
+
+    for (var i = 0; i < length; i++) {
+      promises.push(load({
+        prefix: options.files[i].prefix,
+        key: options.key,
+        suffix: options.files[i].suffix
+      }));
+    }
+
+    $q.all(promises).then(function (data) {
+      var length = data.length,
+          mergedData = {};
+
+      for (var i = 0; i < length; i++) {
+        for (var key in data[i]) {
+          mergedData[key] = data[i][key];
+        }
+      }
+
+      deferred.resolve(mergedData);
+    }, function (data) {
+      deferred.reject(data);
     });
 
     return deferred.promise;
