@@ -1,5 +1,5 @@
 /*!
- * angular-translate - v2.6.0 - 2015-02-08
+ * angular-translate - v2.6.1 - 2015-03-01
  * http://github.com/angular-translate/angular-translate
  * Copyright (c) 2015 ; Licensed MIT
  */
@@ -41,9 +41,9 @@ angular.module('pascalprecht.translate')
 
       $http(angular.extend({
         url: [
-          options.prefix,
+          file.prefix,
           options.key,
-          options.suffix
+          file.suffix
         ].join(''),
         method: 'GET',
         params: ''
