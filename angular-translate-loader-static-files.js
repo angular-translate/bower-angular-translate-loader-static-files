@@ -15,14 +15,18 @@ angular.module('pascalprecht.translate')
  * "lang-en_US.json", "lang-de_DE.json", etc. Using this builder,
  * the response of these urls must be an object of key-value pairs.
  *
- * @param {object} options Options object, which gets prefix, suffix and key.
+ * Alternatively you can provide a dictionary with the language code as the 
+ * key and file path as the value. 
+ *
+ * @param {object} options Options object, which gets a key and either: 
+ * prefix and suffix, or a lookup dictionary with the path to each locale.
  */
 .factory('$translateStaticFilesLoader', ['$q', '$http', function ($q, $http) {
 
   return function (options) {
 
-    if (!options || (!angular.isArray(options.files) && (!angular.isString(options.prefix) || !angular.isString(options.suffix)))) {
-      throw new Error('Couldn\'t load static files, no files and prefix or suffix specified!');
+    if (!options || (!angular.isArray(options.files) && (!angular.isObject(options.lookup) && (!angular.isString(options.prefix) || !angular.isString(options.suffix))))) {
+      throw new Error('Couldn\'t load static files, no files and lookup dictionary or prefix or suffix pattern specified!');
     }
     
     if (!options.files) {
@@ -33,18 +37,32 @@ angular.module('pascalprecht.translate')
     }
 
     var load = function (file) {
-      if (!file || (!angular.isString(file.prefix) || !angular.isString(file.suffix))) {
-        throw new Error('Couldn\'t load static file, no prefix or suffix specified!');
+      if (!file) {
+        throw new Error('Couldn\'t load static file!');
+      }
+      
+      var url;
+      
+      if(options.lookup) {
+        if(!options.lookup[options.key]) {
+          throw new Error('Couldn\'t load static file, because ' + options.key + ' is missing in the lookup table!');
+        }
+        url = options.lookup[options.key];
+      } else {
+        if (!angular.isString(file.prefix) || !angular.isString(file.suffix)) {
+          throw new Error('Couldn\'t load static file, no prefix or suffix specified!');
+        }
+        url = [
+          file.prefix,
+          options.key,
+          file.suffix
+        ].join('');
       }
 
       var deferred = $q.defer();
 
       $http(angular.extend({
-        url: [
-          file.prefix,
-          options.key,
-          file.suffix
-        ].join(''),
+        url: url,
         method: 'GET',
         params: ''
       }, options.$http)).success(function (data) {
