@@ -1,8 +1,24 @@
 /*!
- * angular-translate - v2.6.1 - 2015-03-01
+ * angular-translate - v2.7.0 - 2015-05-02
  * http://github.com/angular-translate/angular-translate
  * Copyright (c) 2015 ; Licensed MIT
  */
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    // AMD. Register as an anonymous module unless amdModuleId is set
+    define([], function () {
+      return (factory());
+    });
+  } else if (typeof exports === 'object') {
+    // Node. Does not work with strict CommonJS, but
+    // only CommonJS-like environments that support module.exports,
+    // like Node.
+    module.exports = factory();
+  } else {
+    factory();
+  }
+}(this, function () {
+
 angular.module('pascalprecht.translate')
 /**
  * @ngdoc object
@@ -17,14 +33,18 @@ angular.module('pascalprecht.translate')
  *
  * @param {object} options Options object, which gets prefix, suffix and key.
  */
-.factory('$translateStaticFilesLoader', ['$q', '$http', function ($q, $http) {
+.factory('$translateStaticFilesLoader', $translateStaticFilesLoader);
+
+function $translateStaticFilesLoader($q, $http) {
+
+  'use strict';
 
   return function (options) {
 
     if (!options || (!angular.isArray(options.files) && (!angular.isString(options.prefix) || !angular.isString(options.suffix)))) {
       throw new Error('Couldn\'t load static files, no files and prefix or suffix specified!');
     }
-    
+
     if (!options.files) {
       options.files = [{
         prefix: options.prefix,
@@ -49,7 +69,7 @@ angular.module('pascalprecht.translate')
         params: ''
       }, options.$http)).success(function (data) {
         deferred.resolve(data);
-      }).error(function (data) {
+      }).error(function () {
         deferred.reject(options.key);
       });
 
@@ -85,4 +105,10 @@ angular.module('pascalprecht.translate')
 
     return deferred.promise;
   };
-}]);
+}
+$translateStaticFilesLoader.$inject = ['$q', '$http'];
+
+$translateStaticFilesLoader.displayName = '$translateStaticFilesLoader';
+return 'pascalprecht.translate';
+
+}));
