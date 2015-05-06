@@ -14,6 +14,12 @@ Please file any issues and bugs in our main repository at [angular-translate/ang
 $ bower install angular-translate-loader-static-files
 ```
 
+### via NPM
+
+```bash
+$ npm install angular-translate-loader-static-files
+```
+
 ### via cdnjs
 
 Please have a look at https://cdnjs.com/libraries/angular-translate-loader-static-files for specific versions.
