@@ -3,9 +3,6 @@
   "description": "A plugin for Angular Translate",
   "version": "2.7.2",
   "main": "./angular-translate-loader-static-files.js",
-  "dependencies": {
-    "angular-translate": "~2.7.2"
-  },
   "ignore": [],
   "author": "Pascal Precht",
   "licenses": [
@@ -13,5 +10,8 @@
       "type": "MIT",
       "url": "http://www.opensource.org/licenses/MIT"
     }
-  ]
+  ],
+  "dependencies": {
+    "angular-translate": "~2.7.2"
+  }
 }
