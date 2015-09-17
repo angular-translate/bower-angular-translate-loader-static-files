@@ -5,12 +5,7 @@
   "main": "./angular-translate-loader-static-files.js",
   "ignore": [],
   "author": "Pascal Precht",
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "http://www.opensource.org/licenses/MIT"
-    }
-  ],
+  "license": "MIT",
   "dependencies": {
     "angular-translate": "~2.7.2"
   }
