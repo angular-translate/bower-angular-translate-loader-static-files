@@ -1,7 +1,7 @@
 /*!
- * angular-translate - v2.7.2 - 2015-06-01
- * http://github.com/angular-translate/angular-translate
- * Copyright (c) 2015 ; Licensed MIT
+ * angular-translate - v2.8.0 - 2015-09-18
+ * 
+ * Copyright (c) 2015 The angular-translate team, Pascal Precht; Licensed MIT
  */
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -57,9 +57,7 @@ function $translateStaticFilesLoader($q, $http) {
         throw new Error('Couldn\'t load static file, no prefix or suffix specified!');
       }
 
-      var deferred = $q.defer();
-
-      $http(angular.extend({
+      return $http(angular.extend({
         url: [
           file.prefix,
           options.key,
@@ -67,13 +65,12 @@ function $translateStaticFilesLoader($q, $http) {
         ].join(''),
         method: 'GET',
         params: ''
-      }, options.$http)).success(function (data) {
-        deferred.resolve(data);
-      }).error(function () {
-        deferred.reject(options.key);
-      });
-
-      return deferred.promise;
+      }, options.$http))
+        .then(function(result) {
+          return result.data;
+        }, function () {
+          return $q.reject(options.key);
+        });
     };
 
     var deferred = $q.defer(),
@@ -88,20 +85,21 @@ function $translateStaticFilesLoader($q, $http) {
       }));
     }
 
-    $q.all(promises).then(function (data) {
-      var length = data.length,
-          mergedData = {};
+    $q.all(promises)
+      .then(function (data) {
+        var length = data.length,
+            mergedData = {};
 
-      for (var i = 0; i < length; i++) {
-        for (var key in data[i]) {
-          mergedData[key] = data[i][key];
+        for (var i = 0; i < length; i++) {
+          for (var key in data[i]) {
+            mergedData[key] = data[i][key];
+          }
         }
-      }
 
-      deferred.resolve(mergedData);
-    }, function (data) {
-      deferred.reject(data);
-    });
+        deferred.resolve(mergedData);
+      }, function (data) {
+        deferred.reject(data);
+      });
 
     return deferred.promise;
   };
