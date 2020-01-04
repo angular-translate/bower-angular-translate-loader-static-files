@@ -1,7 +1,7 @@
 /*!
- * angular-translate - v2.18.1 - 2018-05-19
+ * angular-translate - v2.18.2 - 2020-01-04
  * 
- * Copyright (c) 2018 The angular-translate team, Pascal Precht; Licensed MIT
+ * Copyright (c) 2020 The angular-translate team, Pascal Precht; Licensed MIT
  */
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
